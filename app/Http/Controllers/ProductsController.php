@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Filters\ProductFilters;
 use App\Product;
-use Illuminate\Http\Request;
 
 class ProductsController extends Controller
 {
@@ -12,23 +12,9 @@ class ProductsController extends Controller
         return view('products.index');
     }
 
-    public function products(Request $request)
+    public function products(ProductFilters $productFilters)
     {
-        $products = Product::latest();
-
-        if ($brand = $request->input('filters.brands')) {
-            $products->where('brand', $brand);
-        }
-
-        if ($size = $request->input('filters.sizes')) {
-            $products->where('size', $size);
-        }
-
-        if ($color = $request->input('filters.colors')) {
-            $products->where('color', $color);
-        }
-
-        $products = $products->get();
+        $products = Product::latest()->filter($productFilters)->get();
 
         return [
             'filters'  => [
